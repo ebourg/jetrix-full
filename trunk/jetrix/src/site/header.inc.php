@@ -18,10 +18,10 @@
 <tbody>
   <tr>
     <td>
-      <a href="http://jetrix.sourceforge.net/"><img src="images/jetrix-logo.png" align="left" border="0" alt="JetriX" /></a>
+      <a href="http://jetrix.sourceforge.net/"><img src="images/jetrix-logo.png" align="left" alt="JetriX" /></a>
     </td>
     <td align="right" style="padding-right: 0.5em">
-      <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=52188&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
+      <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=52188&amp;type=2" width="125" height="37" alt="SourceForge.net Logo" /></a>
     </td>
   </tr>
 </tbody>
@@ -38,7 +38,7 @@
     <!-- left side menu -->
     <td style="width: 20%; white-space: nowrap" valign="top">
       <? include("menu.inc.php"); ?>
-      <a href="http://www.opensource.org/"><img src="images/opensource-110x95.png" border="0" alt="Open Source" /></a>
+      <a href="http://www.opensource.org/"><img src="images/opensource-110x95.png" alt="Open Source" /></a>
     </td>
     <td style="width: 80%" align="left" valign="top">
       <div class="content">
