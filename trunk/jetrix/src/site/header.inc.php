@@ -3,8 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/xml; charset=iso-8859-1" />
-  <meta name="author" value="Emmanuel Bourg" />
-  <meta name="email" value="smanux@lfjr.net" />
+  <meta name="author" content="Emmanuel Bourg" />
+  <meta name="email" content="smanux@lfjr.net" />
   <meta name="description" content="JetriX is a new generation TetriNET server written in Java and designed for maximum scalability and extensibility." />
   <meta name="keywords" content="jetrix, tetrinet, server, tnet, tetrifast, tfast, tspec, tetris, tetrix, java" />
   <link rel="stylesheet" href="style.css" />
@@ -27,18 +27,18 @@
 </tbody>
 </table>
 
-<table border="0" width="100%" cellspacing="4">
+<table style="width: 100%" cellspacing="4">
 <tbody>
   <tr>
     <td colspan="2">
-      <hr noshade="" size="1" />
+      <div class="hr"></div>
     </td>
   </tr>
   <tr>
     <!-- left side menu -->
-    <td width="20%" valign="top" nowrap="true">
+    <td style="width: 20%; white-space: nowrap" valign="top">
       <? include("menu.inc.php"); ?>
       <a href="http://www.opensource.org/"><img src="images/opensource-110x95.png" border="0" alt="Open Source" /></a>
     </td>
-    <td width="80%" align="left" valign="top">
+    <td style="width: 80%" align="left" valign="top">
       <div class="content">
