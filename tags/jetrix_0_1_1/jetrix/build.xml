@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="Jetrix TetriNET Server" default="dist" basedir=".">
+
+  <property name="compile.debug"    value="true"/>
+  <property name="compile.optimize" value="false"/>
+  <property name="src"     value="src"/>
+  <property name="lib"     value="lib"/>
+  <property name="doc"     value="doc"/>
+  <property name="build"   value="build"/>
+  <property name="dist"    value="dist"/>
+  <property name="deploy"  value="deploy"/>
+  <property file="build.properties" />
+  <property file="jetrix.properties" />
+  <property file="password.properties" />
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp>
+      <format property="build.time" pattern="yyyyMMddHH"/>
+    </tstamp>
+    <!-- Filters -->
+    <filter token="version" value="${version}"/>
+    <filter token="build.time" value="${build.time}"/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build}/java"/>
+    <mkdir dir="${build}/classes"/>
+  </target>
+
+  <target name="prepare" depends="init">
+    <copy todir="${build}/java" filtering="on">
+      <fileset dir="${src}/java" includes="**/*.java"/>
+    </copy>
+  </target>
+
+  <target name="compile" depends="prepare">
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${build}/java" destdir="${build}/classes" debug="${compile.debug}" optimize="${compile.optimize}">
+      <classpath>
+        <pathelement location="${lib}/commons-digester.jar"/>
+        <pathelement location="${lib}/commons-collections.jar"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="compile.test" depends="compile" description="Compile JUnit TestCases">
+    <mkdir dir="${build}/test"/>
+    <javac srcdir="${src}/test" destdir="${build}/test" debug="yes">
+      <classpath>
+        <pathelement path="${build}/classes" />
+        <pathelement location="${lib}/junit.jar"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}/lib"/>    
+    <jar jarfile="${dist}/lib/jetrix.jar">
+      <manifest>
+        <attribute name="Implementation-Title" value="Jetrix TetriNET Server"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Main-Class" value="net.jetrix.Server"/>
+      </manifest>
+      <fileset dir="${build}/classes"/>
+      <fileset dir="${src}/etc">
+        <include name="tetrinet-server.dtd"/>
+      </fileset>
+    </jar>    
+  </target>
+
+  <target name="dist" depends="jar">
+    <mkdir dir="${dist}/bin"/>
+
+    <zip zipfile="${dist}/bin/jetrix-${version}.zip">
+      <zipfileset prefix="jetrix/" dir="${src}/etc/">
+        <include name="news.txt" />
+        <include name="LICENSE" />
+        <include name="README" />
+        <include name="config.xml" />
+      </zipfileset>
+      <zipfileset prefix="jetrix/" dir="${src}/bin/">
+        <include name="jetrix.bat" />
+        <include name="jetrix" />
+        <include name="update.bat" />
+        <include name="update" />
+      </zipfileset>      
+      <zipfileset prefix="jetrix/lib/" dir="${dist}/lib/">
+        <include name="jetrix.jar" />
+      </zipfileset>
+      <zipfileset prefix="jetrix/lib/" dir="${lib}">
+        <include name="commons-digester.jar" />
+        <include name="commons-collections.jar" />
+        <include name="commons-beanutils.jar" />
+      </zipfileset>
+      <zipfileset prefix="jetrix/lang/" dir="${src}/lang/">
+        <include name="*.properties" />
+      </zipfileset>
+      <zipfileset prefix="jetrix/log/" dir="${src}/etc/log/"/>
+    </zip>
+
+    <tar destfile="${dist}/bin/jetrix-${version}.tar">
+      <tarfileset prefix="jetrix/" dir="${src}/etc/">
+        <include name="news.txt" />
+        <include name="LICENSE" />
+        <include name="README" />
+        <include name="config.xml" />
+      </tarfileset>
+      <tarfileset prefix="jetrix/" dir="${src}/bin/">
+        <include name="jetrix.bat" />
+        <include name="update.bat" />
+      </tarfileset>
+      <tarfileset prefix="jetrix/" dir="${src}/bin/" mode="755">
+        <include name="jetrix" />
+        <include name="update" />
+      </tarfileset>
+      <tarfileset prefix="jetrix/lib/" dir="${dist}/lib/">
+        <include name="jetrix.jar" />
+      </tarfileset>
+      <tarfileset prefix="jetrix/lib/" dir="${lib}">
+        <include name="commons-digester.jar" />
+        <include name="commons-collections.jar" />
+        <include name="commons-beanutils.jar" />
+      </tarfileset>
+      <tarfileset prefix="jetrix/lang/" dir="${src}/lang/">
+        <include name="*.properties" />
+      </tarfileset>
+      <tarfileset prefix="jetrix/log/" dir="${src}/etc/log/"/>
+    </tar>
+
+    <gzip zipfile="${dist}/bin/jetrix-${version}.tar.gz" src="${dist}/bin/jetrix-${version}.tar"/>
+    <delete file="${dist}/bin/jetrix-${version}.tar"/>
+  </target>
+
+
+  <target name="dist.src" description="Build source distribution">
+    <!-- Create the source distribution directory -->
+    <mkdir dir="${dist}/src"/>
+
+    <zip zipfile="${dist}/src/jetrix-${version}-src.zip">
+      <zipfileset prefix="jetrix-src/" dir=".">
+        <include name="build.xml" />
+        <include name="jetrix.properties" />
+      </zipfileset>
+      <zipfileset prefix="jetrix-src/src/" dir="${src}">
+        <exclude name="site/"/>
+      </zipfileset>
+      <zipfileset prefix="jetrix-src/lib/" dir="${lib}" />
+    </zip>
+
+    <tar destfile="${dist}/src/jetrix-${version}-src.tar">
+      <tarfileset prefix="jetrix-src/" dir=".">
+        <include name="build.xml" />
+        <include name="jetrix.properties" />
+      </tarfileset>
+      <tarfileset prefix="jetrix-src/src/" dir="${src}">
+        <exclude name="site/"/>
+      </tarfileset>
+      <tarfileset prefix="jetrix-src/lib/" dir="${lib}" />
+    </tar>
+
+    <gzip zipfile="${dist}/src/jetrix-${version}-src.tar.gz" src="${dist}/src/jetrix-${version}-src.tar"/>
+    <delete file="${dist}/src/jetrix-${version}-src.tar"/>
+
+  </target>
+
+
+  <target name="test" depends="compile.test" description="Runs testcases">
+    <junit printsummary="yes" fork="yes" dir="${src}/etc">
+      <classpath>
+        <pathelement path="${build}/test" />
+        <pathelement path="${build}/classes" />
+        <pathelement location="${lib}/commons-digester.jar"/>
+        <pathelement location="${lib}/commons-collections.jar"/>
+      </classpath>
+      <formatter type="xml" />
+      <batchtest todir="${build}/test">
+        <fileset dir="${build}/test">
+          <include name="**/*Test.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+    <mkdir dir="${doc}/test"/>
+    <junitreport todir="${build}/test">
+      <fileset dir="${build}/test">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="noframes" todir="${doc}/test"/>
+    </junitreport>
+  </target>
+
+
+  <target name="deploy" depends="dist">
+    <delete dir="${deploy}"/>
+    <mkdir dir="${deploy}"/>
+    <unzip src="${dist}/bin/jetrix-${version}.zip" dest="${deploy}" />
+  </target>
+
+
+  <target name="run" depends="deploy">
+    <java dir="${deploy}/jetrix" jar="${deploy}/jetrix/lib/jetrix.jar" fork="yes">
+      <sysproperty key="jetrix.debug" value="true"/>
+    </java>
+  </target>
+
+
+  <target name="update" depends="deploy" description="Uploads JetriX to the patch server">
+    <!-- Installing -->
+    <delete dir="${deploy}"/>
+    <mkdir dir="${deploy}"/>
+    <unzip src="${dist}/bin/jetrix-${version}.zip" dest="${deploy}" />
+
+    <!-- Checksum computation -->
+    <java classname="net.jetrix.patcher.UpdateList" dir="${deploy}/jetrix" classpath="${deploy}/jetrix/lib/jetrix.jar" fork="yes" />
+
+    <!-- Uploading to patch server -->
+    <ftp server="${ftp.host}" remotedir="/vsite/tetrinet/public_html/jetrix/autoupdate" userid="${ftp.login}" password="${ftp.pass}" depends="yes" verbose="yes" ignoreNoncriticalErrors="yes">
+      <fileset dir="${deploy}/jetrix"/>
+    </ftp>
+  </target>
+
+  <target name="doc">
+    <mkdir dir="${doc}/api"/>
+    <mkdir dir="${dist}/doc"/>
+    <javadoc packagenames="net.jetrix.*"
+             sourcepath="${src}/java"
+             classpath="${src}/java"
+             destdir="${doc}/api"
+             author="true"
+             version="true"
+             use="false"
+             windowtitle="Javadoc JetriX"
+             doctitle="JetriX TetriNET Server"
+             bottom="Copyright &#169; 2001-2003 Emmanuel Bourg. All Rights Reserved.">
+      <classpath>
+        <fileset dir="${lib}" >
+          <include name="*.jar" />
+        </fileset>
+      </classpath>
+      <link href="http://java.sun.com/j2se/1.4.1/docs/api/"/>
+      <link href="http://jakarta.apache.org/commons/digester/api"/>      
+    </javadoc>
+    <zip zipfile="${dist}/doc/api.zip">
+      <zipfileset dir="${doc}" includes="api/**"/>
+    </zip>
+  </target>
+
+
+  <target name="clean">
+    <!-- Delete the ${build} directory tree -->
+    <delete dir="${dist}"/>
+    <delete dir="${build}"/>
+    <delete dir="${deploy}"/>
+  </target>
+
+</project>
