@@ -102,6 +102,12 @@
   </target>
 
   <target name="dist" depends="jar">
+
+    <mkdir dir="${build}/bin"/>
+    <copy todir="${build}/bin" filtering="on">
+      <fileset dir="${src}/bin" includes="**/*"/>
+    </copy>
+
     <mkdir dir="${dist}/bin"/>
 
     <zip zipfile="${dist}/bin/jetrix-${version}.zip">
@@ -111,7 +117,7 @@
         <include name="README" />
         <include name="config.xml" />
       </zipfileset>
-      <zipfileset prefix="jetrix-${version}/" dir="${src}/bin/">
+      <zipfileset prefix="jetrix-${version}/" dir="${build}/bin/">
         <include name="jetrix.bat" />
         <include name="jetrix" />
         <include name="update.bat" />
@@ -144,11 +150,11 @@
         <include name="README" />
         <include name="config.xml" />
       </tarfileset>
-      <tarfileset prefix="jetrix-${version}/" dir="${src}/bin/">
+      <tarfileset prefix="jetrix-${version}/" dir="${build}/bin/">
         <include name="jetrix.bat" />
         <include name="update.bat" />
       </tarfileset>
-      <tarfileset prefix="jetrix-${version}/" dir="${src}/bin/" mode="755">
+      <tarfileset prefix="jetrix-${version}/" dir="${build}/bin/" mode="755">
         <include name="jetrix" />
         <include name="update" />
       </tarfileset>
@@ -259,11 +265,11 @@
     <unzip src="${dist}/bin/jetrix-${version}.zip" dest="${deploy}" />
 
     <!-- Checksum computation -->
-    <java classname="net.jetrix.patcher.UpdateList" dir="${deploy}/jetrix" classpath="${deploy}/jetrix/lib/jetrix-${version}.jar" fork="yes" />
+    <java classname="net.jetrix.patcher.UpdateList" dir="${deploy}/jetrix-${version}" classpath="${deploy}/jetrix/lib/jetrix-${version}.jar" fork="yes" />
 
     <!-- Uploading to patch server -->
     <ftp server="${ftp.host}" remotedir="/vsite/tetrinet/public_html/jetrix/autoupdate" userid="${ftp.login}" password="${ftp.pass}" depends="yes" verbose="yes" ignoreNoncriticalErrors="yes">
-      <fileset dir="${deploy}/jetrix"/>
+      <fileset dir="${deploy}/jetrix-${version}"/>
     </ftp>
   </target>
 
