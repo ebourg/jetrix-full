@@ -14,11 +14,11 @@
 <body>
 
 <!-- header -->
-<table border="0" width="100%" cellspacing="0">
+<table width="100%" cellspacing="0">
 <tbody>
   <tr>
     <td>
-      <a href="http://jetrix.sourceforge.net/"><img src="images/jetrix-logo.png" align="left" alt="JetriX" /></a>
+      <a href="http://jetrix.sourceforge.net/"><img src="images/jetrix-logo.png" alt="JetriX" style="float: left" /></a>
     </td>
     <td align="right" style="padding-right: 0.5em">
       <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=52188&amp;type=2" width="125" height="37" alt="SourceForge.net Logo" /></a>
@@ -27,7 +27,7 @@
 </tbody>
 </table>
 
-<table style="width: 100%" cellspacing="4">
+<table width="100%" cellspacing="4">
 <tbody>
   <tr>
     <td colspan="2">
