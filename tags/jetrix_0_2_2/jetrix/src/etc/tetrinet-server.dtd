@@ -1,0 +1,68 @@
+<!--
+Jetrix TetriNET Server
+Copyright (C) 2001-2004  Emmanuel Bourg
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<!-- Jetrix Server Configuration DTD ($Revision$, $Date$) -->
+
+<!ENTITY % Ban "(host | nick | team)*">
+
+<!ELEMENT tetrinet-server (name?, language?, timeout?, max-channels?,
+  max-players?, max-connections?, op-password, admin-password, access-log,
+  error-log, listeners, services?, commands, ban?)>
+<!ATTLIST tetrinet-server host CDATA #IMPLIED>
+
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT language (#PCDATA)>
+<!ELEMENT timeout (#PCDATA)>
+<!ELEMENT max-channels (#PCDATA)>
+<!ELEMENT max-players (#PCDATA)>
+<!ELEMENT max-connections (#PCDATA)>
+<!ELEMENT op-password (#PCDATA)>
+<!ELEMENT admin-password (#PCDATA)>
+
+<!ELEMENT access-log EMPTY>
+<!ATTLIST access-log path CDATA #REQUIRED>
+
+<!ELEMENT error-log EMPTY>
+<!ATTLIST error-log path CDATA #REQUIRED>
+
+<!ELEMENT commands (command*)>
+<!ELEMENT command EMPTY>
+<!ATTLIST command class CDATA #REQUIRED>
+<!ATTLIST command hidden CDATA #IMPLIED>
+<!ATTLIST command access-level CDATA #IMPLIED>
+
+<!ELEMENT listeners (listener*)>
+<!ELEMENT listener EMPTY>
+<!ATTLIST listener class CDATA #REQUIRED>
+<!ATTLIST listener port CDATA #IMPLIED>
+<!ATTLIST listener auto-start CDATA #IMPLIED>
+
+<!ELEMENT services (service*)>
+<!ELEMENT service (param*)>
+<!ATTLIST service class CDATA #REQUIRED>
+<!ATTLIST service auto-start CDATA #IMPLIED>
+
+<!ELEMENT param EMPTY>
+<!ATTLIST param name CDATA #REQUIRED>
+<!ATTLIST param value CDATA #REQUIRED>
+
+<!ELEMENT ban %Ban;>
+<!ELEMENT host (#PCDATA)>
+<!ELEMENT nick (#PCDATA)>
+<!ELEMENT team (#PCDATA)>
