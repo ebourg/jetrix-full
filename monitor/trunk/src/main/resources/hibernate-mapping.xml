@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping schema="jetrix">
+
+  <class name="net.jetrix.monitor.ServerInfo" table="server">
+    <id name="id" column="id">
+      <generator class="native"/>
+    </id>
+    <property name="hostname" column="hostname"/>
+    <property name="IP" column="ip"/>
+    <property name="version" column="version"/>
+    <property name="description" column="description"/>
+    <property name="spectate" column="spec" not-null="true"/>
+    <property name="country" column="country"/>
+    <property name="website" column="website"/>
+
+    <property name="dateAdded" column="date_added"/>
+    <property name="lastChecked" column="last_checked"/>
+    <property name="lastOnline" column="last_online"/>
+    <component name="stats">
+      <property name="ping" column="ping" not-null="true"/>
+      <property name="playerCount" column="player_count" not-null="true"/>
+      <property name="channelCount" column="channel_count" not-null="true"/>
+      <property name="activePlayerCount" column="active_player_count" not-null="true"/>
+      <property name="activeChannelCount" column="active_channel_count" not-null="true"/>
+    </component>
+
+    <list name="channels" table="channel" cascade="all" lazy="false">
+      <key column="server_id"/>
+      <index column="pos"/>
+      <composite-element class="net.jetrix.agent.ChannelInfo">
+        <property name="name" column="name"/>
+        <property name="description" column="description"/>
+        <property name="playermax" column="playermax"/>
+        <property name="playernum" column="playernum"/>
+        <property name="priority" column="priority"/>
+        <property name="status" column="status"/>
+      </composite-element>
+    </list>
+
+    <property name="maxPlayerCount" column="max_player_count"/>
+    <property name="maxPlayerDate" column="max_player_date"/>
+    <property name="maxActivePlayerCount" column="max_active_player_count"/>
+    <property name="maxActivePlayerDate" column="max_active_player_date"/>
+
+    <list name="players" table="player" cascade="all" lazy="false">
+      <key column="server_id"/>
+      <index column="pos"/>
+      <composite-element class="net.jetrix.agent.PlayerInfo">
+        <property name="nick" column="nick"/>
+        <property name="channel" column="channel"/>
+        <property name="slot" column="slot"/>
+        <property name="status" column="status"/>
+        <property name="team" column="team"/>
+        <property name="version" column="version"/>
+        <property name="authenticationLevel" column="auth_level"/>
+      </composite-element>
+    </list>
+
+    <set name="aliases" table="server_alias" cascade="all" lazy="false">
+      <key column="server_id"/>
+      <element column="address" type="string"/>
+    </set>
+  </class>
+
+  <class name="net.jetrix.monitor.ServerStats" table="server_stat">
+    <id name="id" column="id">
+      <generator class="native"/>
+    </id>
+    <property name="serverId" column="server_id" not-null="true" index="IDX_SERVER_ID"/>
+    <property name="date" column="date" not-null="true" index="IDX_DATE"/>
+    <property name="ping" column="ping" not-null="true"/>
+    <property name="playerCount" column="player_count" not-null="true"/>
+    <property name="channelCount" column="channel_count" not-null="true"/>
+    <property name="activePlayerCount" column="active_player_count" not-null="true"/>
+    <property name="activeChannelCount" column="active_channel_count" not-null="true"/>
+  </class>
+
+</hibernate-mapping>

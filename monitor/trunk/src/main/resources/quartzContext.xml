@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xsi:schemaLocation="
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+  <bean name="serverSurveyJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <property name="jobClass" value="net.jetrix.monitor.job.ServerSurveyJob" />
+    <property name="applicationContextJobDataKey" value="applicationContext"/>
+  </bean>
+  <bean id="surveyTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    <property name="jobDetail" ref="serverSurveyJob"/>
+    <property name="startDelay" value="10000"/>
+    <property name="repeatInterval" value="120000"/>
+  </bean>
+
+  <bean name="graphGenerationJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <property name="jobClass" value="net.jetrix.monitor.job.GraphGenerationJob" />
+    <property name="applicationContextJobDataKey" value="applicationContext"/>
+  </bean>
+  <bean id="graphTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    <property name="jobDetail" ref="graphGenerationJob"/>
+    <property name="startDelay" value="60000"/>
+    <property name="repeatInterval" value="300000"/>
+  </bean>
+
+  <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean" >
+    <property name="triggers">
+      <list>
+        <ref bean="surveyTrigger"/>
+        <ref bean="graphTrigger"/>
+      </list>
+    </property>
+  </bean>
+
+</beans>
