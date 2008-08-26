@@ -5,7 +5,6 @@
 <%@ page import="org.springframework.web.context.WebApplicationContext" %>
 <%@ page import="net.jetrix.monitor.ServerInfo" %>
 <%@ page import="net.jetrix.monitor.dao.ServerInfoDao" %>
-<%@ page import="java.util.TimeZone" %>
 
 <%
     WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
@@ -14,8 +13,13 @@
     List<ServerInfo> servers = dao.getServers();
 
     int totalPlayerCount = 0;
+    int serverCount = 0;
     Date lastChecked = null;
     for (ServerInfo server : servers) {
+        if (server.isOnline()) {
+            serverCount++;
+        }
+        
         totalPlayerCount += server.getStats().getPlayerCount();
         if (lastChecked == null || (server.getLastChecked() != null && server.getLastChecked().after(lastChecked))) {
             lastChecked = server.getLastChecked();
@@ -39,7 +43,7 @@
 <p>This is a list of the public TetriNET servers. The list is refreshed every 5 minutes. Feel free to add your favorite
 server if it's not in the list.</p>
 
-<p>There are currently <b><%= totalPlayerCount %></b> players online on <b><%= servers.size() %></b> servers. The
+<p>There are currently <b><%= totalPlayerCount %></b> players online on <b><%= serverCount %></b> servers. The
 servers were last checked on <%= lastChecked %>.</p>
 
 <table class="thin sortable" id="serverlist" border="1" align="center">
@@ -55,7 +59,12 @@ servers were last checked on <%= lastChecked %>.</p>
     </tr>
   </thead>
   <tbody>
-<%  for (ServerInfo server : servers) { %>
+<%  for (ServerInfo server : servers) {
+        // skip offline servers
+        if (!server.isOnline()) {
+            continue;
+        }
+%>
     <tr>
       <td><a href="server.jsp?id=<%= server.getId() %>"><%= server.getHostname() %></a></td>
       <td align="center">

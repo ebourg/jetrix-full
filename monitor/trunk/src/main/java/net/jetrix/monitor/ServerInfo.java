@@ -39,9 +39,10 @@ public class ServerInfo
     private String IP;
     private String version;
     private String description;
-    private boolean spectate;
     private String country;
     private String website;
+    private boolean spectate;
+    private String spectatorPassword;
 
     private Date dateAdded;
     private Date lastChecked;
@@ -110,16 +111,6 @@ public class ServerInfo
         this.description = description;
     }
 
-    public boolean isSpectate()
-    {
-        return spectate;
-    }
-
-    public void setSpectate(boolean spectate)
-    {
-        this.spectate = spectate;
-    }
-
     public String getCountry()
     {
         return country;
@@ -138,6 +129,26 @@ public class ServerInfo
     public void setWebsite(String website)
     {
         this.website = website;
+    }
+
+    public boolean isSpectate()
+    {
+        return spectate;
+    }
+
+    public void setSpectate(boolean spectate)
+    {
+        this.spectate = spectate;
+    }
+
+    public String getSpectatorPassword()
+    {
+        return spectatorPassword;
+    }
+
+    public void setSpectatorPassword(String spectatorPassword)
+    {
+        this.spectatorPassword = spectatorPassword;
     }
 
     public Date getDateAdded()
@@ -248,5 +259,13 @@ public class ServerInfo
     public void setAliases(Collection<String> aliases)
     {
         this.aliases = aliases;
+    }
+
+    /**
+     * Tells if the server has been online in the last 15 minutes.
+     */
+    public boolean isOnline()
+    {
+        return lastOnline != null && lastOnline.getTime() > System.currentTimeMillis() - 15 * 60 * 1000;
     }
 }

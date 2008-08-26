@@ -14,7 +14,12 @@
     List<ServerInfo> servers = dao.getServers();
 %>
 <tetrinet-servers>
-<%  for (ServerInfo server : servers) { %>
+<%  for (ServerInfo server : servers) {
+        // skip offline servers
+        if (!server.isOnline()) {
+            continue;
+        }
+%>
   <server
       id="<%= server.getId() %>"
       name="<%= server.getHostname() %>"
