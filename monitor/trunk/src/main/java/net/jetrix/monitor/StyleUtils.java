@@ -91,4 +91,24 @@ public class StyleUtils
 
         return result.toString();
     }
+
+    /**
+     * Remove the style markers from the specified string.
+     *
+     * @param text
+     */
+    public static String strip(String text)
+    {
+        StringBuilder result = new StringBuilder();
+
+        for (char c : text.toCharArray())
+        {
+            if (!STYLES.keySet().contains(c))
+            {
+                result.append(c);
+            }
+        }
+
+        return result.toString();
+    }
 }

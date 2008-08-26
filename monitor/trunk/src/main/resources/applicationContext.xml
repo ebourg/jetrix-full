@@ -37,6 +37,7 @@
 
   <bean id="serverInfoDao" class="net.jetrix.monitor.dao.ServerInfoDao"/>
   <bean id="serverStatsDao" class="net.jetrix.monitor.dao.ServerStatsDao"/>
+  <bean id="playerStatsDao" class="net.jetrix.monitor.dao.PlayerStatsDao"/>
   <bean id="ipToCountryDao" class="net.jetrix.monitor.dao.IpToCountryDao"/>
 
 </beans>

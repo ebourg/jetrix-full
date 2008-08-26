@@ -37,11 +37,14 @@ import org.springframework.context.ApplicationContext;
 
 import net.jetrix.agent.QueryAgent;
 import net.jetrix.agent.QueryInfo;
+import net.jetrix.agent.PlayerInfo;
 import net.jetrix.monitor.NetworkUtils;
 import net.jetrix.monitor.ServerInfo;
 import net.jetrix.monitor.ServerStats;
+import net.jetrix.monitor.PlayerStats;
 import net.jetrix.monitor.dao.ServerInfoDao;
 import net.jetrix.monitor.dao.ServerStatsDao;
+import net.jetrix.monitor.dao.PlayerStatsDao;
 
 /**
  * Job polling the tetrinet servers.
@@ -56,6 +59,7 @@ public class ServerSurveyJob extends TransactionalQuartzJob
         ApplicationContext context = (ApplicationContext) jobExecutionContext.getMergedJobDataMap().get("applicationContext");
         ServerInfoDao serverInfoDao = (ServerInfoDao) context.getBean("serverInfoDao");
         ServerStatsDao serverStatsDao = (ServerStatsDao) context.getBean("serverStatsDao");
+        PlayerStatsDao playerStatsDao = (PlayerStatsDao) context.getBean("playerStatsDao");
 
         List<ServerInfo> servers = serverInfoDao.getServers();
 
@@ -76,10 +80,16 @@ public class ServerSurveyJob extends TransactionalQuartzJob
 
             for (Future<ServerInfo> result : results)
             {
-                try {
+                try
+                {
                     ServerInfo server = result.get();
+                    if (!server.isOnline())
+                    {
+                        server.getPlayers().clear();
+                    }
                     serverInfoDao.save(server);
 
+                    // update the server stats for the activity graph
                     ServerStats stats = server.getStats();
                     stats.setServerId(server.getId());
                     stats.setDate(server.getLastChecked());
@@ -87,9 +97,35 @@ public class ServerSurveyJob extends TransactionalQuartzJob
                     {
                         serverStatsDao.save(stats);
                     }
-                } catch (ExecutionException e) {
+
+                    // update the player stats
+                    for (PlayerInfo player : server.getPlayers())
+                    {
+                        PlayerStats playerStats = playerStatsDao.getStats(player.getNick());
+                        if (playerStats == null)
+                        {
+                            playerStats = new PlayerStats();
+                            playerStats.setName(player.getNick());
+                            playerStats.setFirstSeen(server.getLastOnline());
+                        }
+
+                        playerStats.setTeam(player.getTeam());
+                        playerStats.setLastSeen(server.getLastOnline());
+                        playerStats.setLastServer(server);
+                        if (player.isPlaying())
+                        {
+                            playerStats.setLastPlayed(server.getLastOnline());
+                        }
+
+                        playerStatsDao.save(playerStats);
+                    }
+                }
+                catch (ExecutionException e)
+                {
                     log.log(Level.WARNING, "Error when checking the server", e);
-                } catch (CancellationException e) {
+                }
+                catch (CancellationException e)
+                {
                     log.log(Level.WARNING, "Server survey task cancelled", e);
                 }
             }

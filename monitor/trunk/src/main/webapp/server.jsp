@@ -130,7 +130,7 @@
   <tbody>
 <%  for (PlayerInfo player : server.getPlayers()) { %>
     <tr>
-      <td<%= player.getAuthenticationLevel() > 1 ? " style=\"font-weight: bold\"" : "" %>><%= StyleUtils.toHTML(player.getNick()) %></td>
+      <td<%= player.getAuthenticationLevel() > 1 ? " style=\"font-weight: bold\"" : "" %>><a style="text-decoration: none; color: black" href="player.jsp?id=<%= player.getNick() %>"><%= StyleUtils.toHTML(player.getNick()) %></a></td>
       <td><%= StyleUtils.toHTML(player.getTeam()) %></td>
       <td><%= player.getChannel() %></td>
       <td><%= player.getSlot() %></td>

@@ -11,9 +11,10 @@
     <property name="IP" column="ip"/>
     <property name="version" column="version"/>
     <property name="description" column="description"/>
-    <property name="spectate" column="spec" not-null="true"/>
     <property name="country" column="country"/>
     <property name="website" column="website"/>
+    <property name="spectate" column="spec" not-null="true"/>
+    <property name="spectatorPassword" column="spec_pass"/>
 
     <property name="dateAdded" column="date_added"/>
     <property name="lastChecked" column="last_checked"/>
@@ -75,6 +76,19 @@
     <property name="channelCount" column="channel_count" not-null="true"/>
     <property name="activePlayerCount" column="active_player_count" not-null="true"/>
     <property name="activeChannelCount" column="active_channel_count" not-null="true"/>
+  </class>
+
+  <class name="net.jetrix.monitor.PlayerStats" table="player_stat">
+    <id name="name" column="name">
+      <generator class="assigned"/>
+    </id>
+    <many-to-one name="lastServer" column="server"/>
+    <property name="channel" column="channel"/>
+    <property name="team" column="team"/>
+
+    <property name="firstSeen" column="first_seen"/>
+    <property name="lastSeen"  column="last_seen"/>
+    <property name="lastPlayed" column="last_played"/>
   </class>
 
 </hibernate-mapping>
