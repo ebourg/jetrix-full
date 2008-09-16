@@ -18,9 +18,9 @@
     for (ServerInfo server : servers) {
         if (server.isOnline()) {
             serverCount++;
+            totalPlayerCount += server.getStats().getPlayerCount();
         }
-        
-        totalPlayerCount += server.getStats().getPlayerCount();
+
         if (lastChecked == null || (server.getLastChecked() != null && server.getLastChecked().after(lastChecked))) {
             lastChecked = server.getLastChecked();
         }
