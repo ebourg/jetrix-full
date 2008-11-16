@@ -6,6 +6,7 @@
 <%@ page import="net.jetrix.monitor.ServerInfo" %>
 <%@ page import="net.jetrix.monitor.dao.ServerInfoDao" %>
 <%@ page import="net.jetrix.monitor.StyleUtils" %>
+<%@ page import="java.net.URLEncoder" %>
 <%
     WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
     ServerInfoDao dao = (ServerInfoDao) context.getBean("serverInfoDao");
@@ -21,6 +22,7 @@
         countryFlag = countryName;
     }
 
+    boolean viewable = server.isSpectate() && server.getSpectatorPassword() != null;
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -155,6 +157,9 @@
       <th>Description</th>
       <th>Players</th>
       <th>Status</th>
+<%  if (viewable) { %>
+      <th>Action</th>
+<%  } %>
     </tr>
   </thead>
   <tbody>
@@ -164,6 +169,13 @@
       <td><%= StyleUtils.toHTML(channel.getDescription()) %></td>
       <td><%= channel.getPlayernum() %> / <%= channel.getPlayermax() %></td>
       <td style="color: green; font-weight: bold"><%= channel.isPlaying() ? "INGAME" : "" %></td>
+<%  if (viewable) { %>
+      <td align="center">
+<%      if (channel.getPlayernum() > 0) { %>
+        <a href="spec.jsp?id=<%= server.getId() %>&channel=<%= URLEncoder.encode(channel.getName()) %>">View</a>
+<%      } %>
+      </td>
+<%  } %>
     </tr>
 <%  } %>
   </tbody>
