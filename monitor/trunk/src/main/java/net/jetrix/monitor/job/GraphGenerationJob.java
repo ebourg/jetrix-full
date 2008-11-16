@@ -45,6 +45,8 @@ import net.jetrix.monitor.dao.ServerInfoDao;
 import net.jetrix.monitor.dao.ServerStatsDao;
 
 /**
+ * Job updating the graphs.
+ * 
  * @author Emmanuel Bourg
  * @version $Revision$, $Date$
  */
@@ -52,7 +54,10 @@ public class GraphGenerationJob extends TransactionalQuartzJob
 {
     public static final String DEFAULT_DATAPATH = System.getProperty("user.home") + "/.jetrix";
 
+    /** The directory where the RRD files are stored. */
     private String dataPath = DEFAULT_DATAPATH;
+    
+    /** The directory where the images are generated. */
     private String outpoutPath = DEFAULT_DATAPATH;
 
     public void setDataPath(String dataPath)
@@ -85,6 +90,15 @@ public class GraphGenerationJob extends TransactionalQuartzJob
             {
                 List<ServerStats> stats = serverStatsDao.getStats(server.getId());
                 generateGraph(server, stats);
+
+                /**
+                 * Remove the stats from the SQL database
+                 */
+                if (!stats.isEmpty())
+                {
+                    ServerStats lastStats = stats.get(stats.size() - 1);
+                    serverStatsDao.delete(server.getId(), lastStats.getDate());
+                }
             }
             catch (Exception e)
             {
@@ -100,7 +114,7 @@ public class GraphGenerationJob extends TransactionalQuartzJob
 
     protected void generateGraph(ServerInfo server, List<ServerStats> stats) throws RrdException, IOException
     {
-        boolean update= updateDatabase(server,stats);
+        boolean update= updateDatabase(server, stats);
         if (update)
         {
             generateGraph(server, 1);
@@ -156,7 +170,7 @@ public class GraphGenerationJob extends TransactionalQuartzJob
 
         def.addDatasource("players", "GAUGE", 600, 0, Double.NaN);
         def.addDatasource("activePlayers", "GAUGE", 600, 0, Double.NaN);
-        def.addArchive("AVERAGE", 0.5, 1, 1000000);
+        def.addArchive("AVERAGE", 0.5, 1, 500000);
 
         RrdDb rrdDb = new RrdDb(def);
         rrdDb.close();

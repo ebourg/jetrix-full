@@ -20,6 +20,7 @@
 package net.jetrix.monitor.dao;
 
 import java.util.List;
+import java.util.Date;
 
 import org.hibernate.Query;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
@@ -43,5 +44,20 @@ public class ServerStatsDao extends HibernateDaoSupport
     public void save(ServerStats stats)
     {
         getSession().saveOrUpdate(stats);
+    }
+
+    /**
+     * Delete the server stats up to the specified date.
+     * 
+     * @param serverId
+     * @param date
+     */
+    public void delete(long serverId, Date date)
+    {
+        Query query = getSession().createQuery("DELETE FROM ServerStats WHERE serverId=:id AND date <= :date");
+        query.setParameter("id", serverId);
+        query.setParameter("date", date);
+        
+        query.executeUpdate();
     }
 }
