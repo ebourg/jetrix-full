@@ -160,7 +160,17 @@ public class ServerSurveyJob extends TransactionalQuartzJob
                 server.getStats().update(info);
                 server.setVersion(info.getVersion());
                 server.setLastOnline(server.getLastChecked());
-                server.setChannels(info.getChannels());
+                
+                if (server.getChannels() == null)
+                {
+                    server.setChannels(info.getChannels());
+                }
+                else
+                {
+                    server.getChannels().clear();
+                    server.getChannels().addAll(info.getChannels());
+                }
+                
                 server.setPlayers(info.getPlayers());
 
                 if (server.getStats().getActivePlayerCount() > server.getMaxActivePlayerCount())
