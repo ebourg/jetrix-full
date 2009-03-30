@@ -26,6 +26,16 @@
     <filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
   </filter>
 
+  <servlet>
+    <servlet-name>servers-xml</servlet-name>
+    <jsp-file>/servers-xml.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>servers-xml</servlet-name>
+    <url-pattern>/servers.xml</url-pattern>
+  </servlet-mapping>
+
   <filter-mapping>
     <filter-name>hibernateFilter</filter-name>
     <url-pattern>/*</url-pattern>
