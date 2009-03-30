@@ -8,6 +8,7 @@
 <%@ page import="net.jetrix.monitor.dao.ServerInfoDao" %>
 <%@ page import="net.jetrix.monitor.StyleUtils" %>
 <%@ page import="java.net.URLEncoder" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%
     WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
     ServerInfoDao dao = (ServerInfoDao) context.getBean("serverInfoDao");
@@ -37,6 +38,7 @@
   </title>
   <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
   <link rel="Shorcut Icon" href="favicon.ico">
+  <link rel="alternate" type="text/xml" title="<%= StringEscapeUtils.escapeHtml(server.getHostname()) %> XML data sheet" href="server.xml?id=<%= server.getId() %>">
   <script type="text/javascript" src="scripts/sortable.js"></script>
 </head>
 <body>
@@ -222,6 +224,12 @@
 </table>
 
 <%  } %>
+
+<hr>
+
+<div align="right">
+  <a href="server.xml?id=<%= server.getId() %>" class="datasheet"><fmt:message key="word.datasheet"/></a>
+</div>
 
 </body>
 </html>

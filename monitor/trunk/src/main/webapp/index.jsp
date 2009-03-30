@@ -34,6 +34,7 @@
   <title><fmt:message key="title.servers"/></title>
   <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
   <link rel="Shorcut Icon" href="favicon.ico">
+  <link rel="alternate" type="text/xml" title="Servers XML summary" href="servers.xml">
   <script type="text/javascript" src="scripts/sortable.js"></script>
 </head>
 <body>

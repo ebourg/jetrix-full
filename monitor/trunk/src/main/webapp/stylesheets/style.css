@@ -36,3 +36,10 @@ img {
 .sortarrow {
     display: none;
 }
+
+a.datasheet {
+    background-image: url("../images/xml.png");
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    text-decoration: none;
+}
