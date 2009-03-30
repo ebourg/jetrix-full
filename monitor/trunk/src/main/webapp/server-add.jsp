@@ -11,11 +11,10 @@
 <%
     String hostname = request.getParameter("hostname");
 
-    InetAddress address = null;
     try
     {
         // lookup the IP
-        address = InetAddress.getByName(hostname);
+        InetAddress address = InetAddress.getByName(hostname);
 
         WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
         ServerInfoDao dao = (ServerInfoDao) context.getBean("serverInfoDao");

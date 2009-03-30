@@ -68,7 +68,7 @@ public class ServerInfoDao extends HibernateDaoSupport
      */
     public boolean exists(ServerInfo server)
     {
-        Query query = getSession().createQuery("FROM ServerInfo WHERE IP = :ip OR hostname = :name");
+        Query query = getSession().createQuery("FROM ServerInfo WHERE IP = :ip OR hostname = :name OR :ip IN elements(aliases)");
         query.setParameter("ip", server.getIP());
         query.setParameter("name", server.getHostname());
         List result = query.list();

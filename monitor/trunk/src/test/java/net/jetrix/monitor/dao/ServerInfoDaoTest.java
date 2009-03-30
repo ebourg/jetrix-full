@@ -36,4 +36,12 @@ public class ServerInfoDaoTest extends SpringTestCase
 
         assertNotNull("server 1 not found", server);
     }
+
+    public void testExists() throws Exception
+    {
+        ServerInfo server = dao.getServer(1);
+
+        assertNotNull("server 1 not found", server);
+        assertTrue("server 1 doesn't not exist", dao.exists(server));
+    }
 }
