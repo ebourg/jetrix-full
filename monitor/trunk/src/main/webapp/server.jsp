@@ -12,20 +12,20 @@
 <%
     WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
     ServerInfoDao dao = (ServerInfoDao) context.getBean("serverInfoDao");
-
+    
     ServerInfo server = dao.getServer(Long.parseLong(request.getParameter("id")));
-
+    
     String countryName = "Unknown";
     String localizedCountryName = "Unknown";
     String countryFlag = "United Nations";
-
+    
     if (server.getCountry() != null) {
         Locale locale = new Locale("en", server.getCountry());
         countryName = locale.getDisplayCountry(Locale.ENGLISH);
         localizedCountryName = locale.getDisplayCountry(request.getLocale());
         countryFlag = countryName;
     }
-
+    
     boolean viewable = server.isSpectate() && server.getSpectatorPassword() != null;
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -135,6 +135,16 @@
     <td>
       <% if (server.getLastOnline() != null) { %>
       <%= server.getLastOnline() %>
+      <% } else { %>
+      <fmt:message key="word.never"/>
+      <% } %>
+    </td>
+  </tr>
+  <tr>
+    <th><fmt:message key="word.last-game"/></th>
+    <td>
+      <% if (server.getLastActive() != null) { %>
+      <%= server.getLastActive() %>
       <% } else { %>
       <fmt:message key="word.never"/>
       <% } %>

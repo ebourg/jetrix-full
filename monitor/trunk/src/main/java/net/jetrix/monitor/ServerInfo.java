@@ -44,9 +44,20 @@ public class ServerInfo
     private boolean spectate;
     private String spectatorPassword;
 
+    /** The date the server was added to the survey. */
     private Date dateAdded;
+
+    /** The last time the server was queried. */
     private Date lastChecked;
+
+    /** The last time the server was online. */
     private Date lastOnline;
+
+    /** The last time the server was populated with players. */
+    private Date lastPopulated;
+
+    /** The last time the server hosted a game. */
+    private Date lastActive;
 
     private ServerStats stats = new ServerStats();
 
@@ -179,6 +190,26 @@ public class ServerInfo
     public void setLastOnline(Date lastOnline)
     {
         this.lastOnline = lastOnline;
+    }
+
+    public Date getLastPopulated()
+    {
+        return lastPopulated;
+    }
+
+    public void setLastPopulated(Date lastPopulated)
+    {
+        this.lastPopulated = lastPopulated;
+    }
+
+    public Date getLastActive()
+    {
+        return lastActive;
+    }
+
+    public void setLastActive(Date lastActive)
+    {
+        this.lastActive = lastActive;
     }
 
     public ServerStats getStats()

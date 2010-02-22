@@ -15,10 +15,12 @@
     <property name="website" column="website"/>
     <property name="spectate" column="spec" not-null="true"/>
     <property name="spectatorPassword" column="spec_pass"/>
-
+    
     <property name="dateAdded" column="date_added"/>
     <property name="lastChecked" column="last_checked"/>
     <property name="lastOnline" column="last_online"/>
+    <property name="lastPopulated" column="last_populated"/>
+    <property name="lastActive" column="last_active"/>
     <component name="stats">
       <property name="ping" column="ping" not-null="true"/>
       <property name="playerCount" column="player_count" not-null="true"/>
@@ -26,7 +28,7 @@
       <property name="activePlayerCount" column="active_player_count" not-null="true"/>
       <property name="activeChannelCount" column="active_channel_count" not-null="true"/>
     </component>
-
+    
     <list name="channels" table="channel" cascade="all" lazy="false">
       <key column="server_id"/>
       <index column="pos"/>

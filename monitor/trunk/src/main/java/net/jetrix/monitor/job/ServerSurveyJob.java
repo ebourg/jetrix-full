@@ -58,67 +58,29 @@ public class ServerSurveyJob extends TransactionalQuartzJob
     {
         ApplicationContext context = (ApplicationContext) jobExecutionContext.getMergedJobDataMap().get("applicationContext");
         ServerInfoDao serverInfoDao = (ServerInfoDao) context.getBean("serverInfoDao");
-        ServerStatsDao serverStatsDao = (ServerStatsDao) context.getBean("serverStatsDao");
-        PlayerStatsDao playerStatsDao = (PlayerStatsDao) context.getBean("playerStatsDao");
-
+                
         List<ServerInfo> servers = serverInfoDao.getServers();
-
+        
         log.info("Checking servers... ");
-
+        
         List<Callable<ServerInfo>> workers = new ArrayList<Callable<ServerInfo>>();
-
+        
         ExecutorService executor = Executors.newFixedThreadPool(20);
         for (ServerInfo server : servers)
         {
             workers.add(new Worker(server));
         }
-
+        
         try
         {
             List<Future<ServerInfo>> results = executor.invokeAll(workers, 45, TimeUnit.SECONDS);
             executor.shutdown();
-
+            
             for (Future<ServerInfo> result : results)
             {
                 try
                 {
-                    ServerInfo server = result.get();
-                    if (!server.isOnline())
-                    {
-                        server.getPlayers().clear();
-                    }
-                    serverInfoDao.save(server);
-
-                    // update the server stats for the activity graph
-                    ServerStats stats = server.getStats();
-                    stats.setServerId(server.getId());
-                    stats.setDate(server.getLastChecked());
-                    if (stats.getPlayerCount() > 0)
-                    {
-                        serverStatsDao.save(stats);
-                    }
-
-                    // update the player stats
-                    for (PlayerInfo player : server.getPlayers())
-                    {
-                        PlayerStats playerStats = playerStatsDao.getStats(player.getNick());
-                        if (playerStats == null)
-                        {
-                            playerStats = new PlayerStats();
-                            playerStats.setName(player.getNick());
-                            playerStats.setFirstSeen(server.getLastOnline());
-                        }
-
-                        playerStats.setTeam(player.getTeam());
-                        playerStats.setLastSeen(server.getLastOnline());
-                        playerStats.setLastServer(server);
-                        if (player.isPlaying())
-                        {
-                            playerStats.setLastPlayed(server.getLastOnline());
-                        }
-
-                        playerStatsDao.save(playerStats);
-                    }
+                    handleResult(context, result.get());
                 }
                 catch (ExecutionException e)
                 {
@@ -136,27 +98,71 @@ public class ServerSurveyJob extends TransactionalQuartzJob
         }
     }
 
+    private void handleResult(ApplicationContext context, ServerInfo server)
+    {
+        ServerInfoDao serverInfoDao = (ServerInfoDao) context.getBean("serverInfoDao");
+        ServerStatsDao serverStatsDao = (ServerStatsDao) context.getBean("serverStatsDao");
+        PlayerStatsDao playerStatsDao = (PlayerStatsDao) context.getBean("playerStatsDao");
+        
+        if (!server.isOnline())
+        {
+            server.getPlayers().clear();
+        }
+        serverInfoDao.save(server);
+        
+        // update the server stats for the activity graph
+        ServerStats stats = server.getStats();
+        stats.setServerId(server.getId());
+        stats.setDate(server.getLastChecked());
+        if (stats.getPlayerCount() > 0)
+        {
+            serverStatsDao.save(stats);
+        }
+        
+        // update the player stats
+        for (PlayerInfo player : server.getPlayers())
+        {
+            PlayerStats playerStats = playerStatsDao.getStats(player.getNick());
+            if (playerStats == null)
+            {
+                playerStats = new PlayerStats();
+                playerStats.setName(player.getNick());
+                playerStats.setFirstSeen(server.getLastOnline());
+            }
+            
+            playerStats.setTeam(player.getTeam());
+            playerStats.setLastSeen(server.getLastOnline());
+            playerStats.setLastServer(server);
+            if (player.isPlaying())
+            {
+                playerStats.setLastPlayed(server.getLastOnline());
+            }
+            
+            playerStatsDao.save(playerStats);
+        }
+    }
+
     private class Worker implements Callable<ServerInfo>
     {
         private ServerInfo server;
-
+        
         public Worker(ServerInfo server)
         {
             this.server = server;
         }
-
+        
         public ServerInfo call() throws Exception
         {
             QueryAgent agent = new QueryAgent();
             server.setLastChecked(new Date());
             server.setStats(new ServerStats());
-
+            
             try
             {
                 agent.connect(server.getHostname());
-
+                
                 QueryInfo info = agent.getInfo();
-
+                
                 server.getStats().update(info);
                 server.setVersion(info.getVersion());
                 server.setLastOnline(server.getLastChecked());
@@ -172,18 +178,29 @@ public class ServerSurveyJob extends TransactionalQuartzJob
                 }
                 
                 server.setPlayers(info.getPlayers());
-
+                
                 if (server.getStats().getActivePlayerCount() > server.getMaxActivePlayerCount())
                 {
                     server.setMaxActivePlayerCount(server.getStats().getActivePlayerCount());
                     server.setMaxActivePlayerDate(server.getLastChecked());
                 }
+                
                 if (server.getStats().getPlayerCount() > server.getMaxPlayerCount())
                 {
                     server.setMaxPlayerCount(server.getStats().getPlayerCount());
                     server.setMaxPlayerDate(server.getLastChecked());
                 }
-
+                
+                if (server.getStats().getActivePlayerCount() > 0)
+                {
+                    server.setLastActive(server.getLastChecked());
+                }
+                
+                if (server.getStats().getPlayerCount() > 0)
+                {
+                    server.setLastPopulated(server.getLastPopulated());
+                }
+                
                 server.setSpectate(NetworkUtils.isPortOpen(server.getHostname(), 31458));
             }
             catch (Exception e)
@@ -194,7 +211,7 @@ public class ServerSurveyJob extends TransactionalQuartzJob
             {
                 agent.disconnect();
             }
-
+            
             return server;
         }
     }
