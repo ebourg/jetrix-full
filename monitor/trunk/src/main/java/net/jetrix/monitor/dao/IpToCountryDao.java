@@ -19,7 +19,6 @@
 
 package net.jetrix.monitor.dao;
 
-import java.io.IOException;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.URL;

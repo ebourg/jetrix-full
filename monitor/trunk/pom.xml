@@ -96,9 +96,9 @@
     </dependency>
 
     <dependency>
-      <groupId>maxmind</groupId>
-      <artifactId>geoip</artifactId>
-      <version>1.2.2</version>
+      <groupId>org.dspace.dependencies</groupId>
+      <artifactId>dspace-geoip</artifactId>
+      <version>1.2.3</version>
     </dependency>
 
     <dependency>
@@ -179,26 +179,6 @@
           <testFailureIgnore>true</testFailureIgnore>
           <skip>false</skip>
         </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-install-plugin</artifactId>
-        <configuration>
-          <file>lib/geoip-1.2.2.jar</file>
-          <groupId>maxmind</groupId>
-          <artifactId>geoip</artifactId>
-          <version>1.2.2</version>
-          <packaging>jar</packaging>
-          <generatePom>true</generatePom>
-          <createChecksum>true</createChecksum>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
