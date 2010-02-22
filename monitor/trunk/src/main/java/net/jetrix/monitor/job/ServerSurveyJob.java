@@ -58,10 +58,11 @@ public class ServerSurveyJob extends TransactionalQuartzJob
     {
         ApplicationContext context = (ApplicationContext) jobExecutionContext.getMergedJobDataMap().get("applicationContext");
         ServerInfoDao serverInfoDao = (ServerInfoDao) context.getBean("serverInfoDao");
-                
+        
         List<ServerInfo> servers = serverInfoDao.getServers();
         
         log.info("Checking servers... ");
+        long t0 = System.currentTimeMillis();
         
         List<Callable<ServerInfo>> workers = new ArrayList<Callable<ServerInfo>>();
         
@@ -96,6 +97,8 @@ public class ServerSurveyJob extends TransactionalQuartzJob
         {
             throw new JobExecutionException(e);
         }
+        
+        log.info(servers.size() + " servers checked in " + (System.currentTimeMillis() - t0) / 1000 + " seconds");
     }
 
     private void handleResult(ApplicationContext context, ServerInfo server)
@@ -205,7 +208,7 @@ public class ServerSurveyJob extends TransactionalQuartzJob
             }
             catch (Exception e)
             {
-                log.info("Unable to check the server " + server.getHostname() + " : " + e.getMessage());
+                log.fine("Unable to check the server " + server.getHostname() + " : " + e.getMessage());
             }
             finally
             {
