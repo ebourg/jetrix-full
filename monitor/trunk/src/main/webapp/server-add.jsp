@@ -8,8 +8,12 @@
 <%@ page import="net.jetrix.monitor.dao.ServerInfoDao" %>
 <%@ page import="org.springframework.web.context.ContextLoader" %>
 <%@ page import="org.springframework.web.context.WebApplicationContext" %>
+<%@ page import="java.util.logging.Logger" %>
 <%
     String hostname = request.getParameter("hostname");
+    Logger log = Logger.getLogger("net.jetrix.monitor");
+    
+    log.info("New server requested from [" + request.getRemoteHost() + "] : " + hostname);
     
     try
     {
@@ -21,6 +25,7 @@
                 || address.isSiteLocalAddress()
                 || address.isMulticastAddress()) {
             // multicast and non routable addresses are ignored
+            log.info("Server " + address + " not added: address not reachable");
             return;
         }
         
@@ -52,13 +57,15 @@
         if (!dao.exists(server))
         {
             dao.save(server);
-            out.println("server added " + address);
+            out.println("Server added (" + address + ")");
+            log.info("Server added (" + address + ")");
         }
         
         // todo register the alias if the server is already registered
     }
     catch (IOException e)
     {
+        log.info("Server " + hostname + " not added: " + e.getMessage());
         out.println(e.getMessage());
         // server ignored
     }
