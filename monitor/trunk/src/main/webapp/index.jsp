@@ -78,7 +78,7 @@
         }
 %>
     <tr>
-      <td><a href="server.jsp?id=<%= server.getId() %>"><%= server.getHostname() %></a></td>
+      <td><a href="server/<%= server.getHostname() %>"><%= server.getHostname() %></a></td>
       <td align="center">
 <%      if (server.getCountry() != null) { %>
           <%

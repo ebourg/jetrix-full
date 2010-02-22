@@ -51,6 +51,16 @@
     <url-pattern>/server.xml</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>server</servlet-name>
+    <jsp-file>/server.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>server</servlet-name>
+    <url-pattern>/server/*</url-pattern>
+  </servlet-mapping>
+
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>

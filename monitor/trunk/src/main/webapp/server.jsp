@@ -1,29 +1,44 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.util.Locale" %>
-<%@ page import="org.springframework.web.context.ContextLoader" %>
-<%@ page import="org.springframework.web.context.WebApplicationContext" %>
 <%@ page import="net.jetrix.agent.ChannelInfo" %>
 <%@ page import="net.jetrix.agent.PlayerInfo" %>
 <%@ page import="net.jetrix.monitor.ServerInfo" %>
-<%@ page import="net.jetrix.monitor.dao.ServerInfoDao" %>
 <%@ page import="net.jetrix.monitor.StyleUtils" %>
-<%@ page import="java.net.URLEncoder" %>
+<%@ page import="net.jetrix.monitor.dao.ServerInfoDao" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.springframework.web.context.ContextLoader" %>
+<%@ page import="org.springframework.web.context.WebApplicationContext" %>
 <%
     WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
     ServerInfoDao dao = (ServerInfoDao) context.getBean("serverInfoDao");
     
-    ServerInfo server = dao.getServer(Long.parseLong(request.getParameter("id")));
+    // find the server from its id or hostname
+    ServerInfo server = null;
+    if (request.getParameter("id") != null) {
+        server = dao.getServer(Long.parseLong(request.getParameter("id")));
+    } else if (request.getPathInfo() != null) {
+        String info = request.getPathInfo().substring(request.getPathInfo().lastIndexOf('/') + 1);
+        if (StringUtils.isNumeric(info) && !info.isEmpty()) {
+            server = dao.getServer(Long.parseLong(info));
+        } else {
+            server = dao.getServer(info);
+        }
+    }
     
-    String countryName = "Unknown";
+    if (server == null) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "TetriNET server not found");
+        return;
+    }
+    
     String localizedCountryName = "Unknown";
     String countryFlag = "United Nations";
     
     if (server.getCountry() != null) {
         Locale locale = new Locale("en", server.getCountry());
-        countryName = locale.getDisplayCountry(Locale.ENGLISH);
         localizedCountryName = locale.getDisplayCountry(request.getLocale());
-        countryFlag = countryName;
+        countryFlag = locale.getDisplayCountry(Locale.ENGLISH);
     }
     
     boolean viewable = server.isSpectate() && server.getSpectatorPassword() != null;
@@ -36,10 +51,10 @@
       <fmt:param><%= server.getHostname() %></fmt:param>
     </fmt:message>  
   </title>
-  <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
-  <link rel="Shorcut Icon" href="favicon.ico">
-  <link rel="alternate" type="text/xml" title="<%= StringEscapeUtils.escapeHtml(server.getHostname()) %> XML data sheet" href="server.xml?id=<%= server.getId() %>">
-  <script type="text/javascript" src="scripts/sortable.js"></script>
+  <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/stylesheets/style.css">
+  <link rel="Shorcut Icon" href="<%= request.getContextPath() %>/favicon.ico">
+  <link rel="alternate" type="text/xml" title="<%= StringEscapeUtils.escapeHtml(server.getHostname()) %> XML data sheet" href="<%= request.getContextPath() %>/server.xml?id=<%= server.getId() %>">
+  <script type="text/javascript" src="<%= request.getContextPath() %>/scripts/sortable.js"></script>
 </head>
 <body>
 
@@ -51,7 +66,7 @@
 
 <%  if (server.getMaxPlayerCount() > 0) { %>
 <div style="float: right">
-  <img src="images/graphs/server-<%= server.getId() %>.png" alt="<fmt:message key="word.activity-graph"/>">
+  <img src="<%= request.getContextPath() %>/images/graphs/server-<%= server.getId() %>.png" alt="<fmt:message key="word.activity-graph"/>">
 </div>
 <%  } %>
 
@@ -77,7 +92,7 @@
     <td>
       <table border="0" cellpadding="0" cellspacing="0">
         <tr>
-          <td><img src="images/flags/24/<%= countryFlag %>.png" alt="<%= localizedCountryName%>"></td>
+          <td><img src="<%= request.getContextPath() %>/images/flags/24/<%= countryFlag %>.png" alt="<%= localizedCountryName%>"></td>
           <td><%= localizedCountryName%></td>
         </tr>
       </table>
@@ -174,7 +189,7 @@
   <tbody>
 <%  for (PlayerInfo player : server.getPlayers()) { %>
     <tr>
-      <td<%= player.getAuthenticationLevel() > 1 ? " style=\"font-weight: bold\"" : "" %>><a style="text-decoration: none; color: black" href="player.jsp?id=<%= player.getNick() %>"><%= StyleUtils.toHTML(player.getNick()) %></a></td>
+      <td<%= player.getAuthenticationLevel() > 1 ? " style=\"font-weight: bold\"" : "" %>><a style="text-decoration: none; color: black" href="<%= request.getContextPath() %>/player.jsp?id=<%= player.getNick() %>"><%= StyleUtils.toHTML(player.getNick()) %></a></td>
       <td><%= StyleUtils.toHTML(player.getTeam()) %></td>
       <td><%= player.getChannel() %></td>
       <td><%= player.getSlot() %></td>
@@ -224,7 +239,7 @@
 <%  if (viewable) { %>
       <td align="center">
 <%      if (channel.getPlayernum() > 0) { %>
-        <a href="spec.jsp?id=<%= server.getId() %>&channel=<%= URLEncoder.encode(channel.getName()) %>">View</a>
+        <a href="<%= request.getContextPath() %>/spec.jsp?id=<%= server.getId() %>&channel=<%= URLEncoder.encode(channel.getName(), "iso-8859-1") %>">View</a>
 <%      } %>
       </td>
 <%  } %>
@@ -238,7 +253,7 @@
 <hr>
 
 <div align="right">
-  <a href="server.xml?id=<%= server.getId() %>" class="datasheet"><fmt:message key="word.datasheet"/></a>
+  <a href="<%= request.getContextPath() %>/server.xml?id=<%= server.getId() %>" class="datasheet"><fmt:message key="word.datasheet"/></a>
 </div>
 
 </body>
