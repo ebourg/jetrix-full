@@ -7,9 +7,18 @@
 <%
     WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
     PlayerStatsDao dao = (PlayerStatsDao) context.getBean("playerStatsDao");
-
-    PlayerStats player = dao.getStats(request.getParameter("id"));
-
+    
+    PlayerStats player = null;
+    if (request.getParameter("id") != null) {
+        player = dao.getStats(request.getParameter("id"));
+    } else if (request.getPathInfo() != null) {
+        player = dao.getStats(request.getPathInfo().substring(request.getPathInfo().lastIndexOf('/') + 1));
+    }
+    
+    if (player == null) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "TetriNET player not found");
+        return;
+    }
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -19,11 +28,10 @@
       <fmt:param><%= StyleUtils.strip(player.getName()) %></fmt:param>
     </fmt:message>
   </title>
-  <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
-  <link rel="Shorcut Icon" href="favicon.ico">
+  <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/stylesheets/style.css">
+  <link rel="Shorcut Icon" href="<%= request.getContextPath() %>/favicon.ico">
 </head>
 <body>
-
 
 
 <h1>
@@ -47,7 +55,7 @@
   </tr>
   <tr>
     <th><fmt:message key="word.server"/></th>
-    <td><a href="server.jsp?id=<%= player.getLastServer().getId() %>"><%= player.getLastServer().getHostname() %></a></td>
+    <td><a href="<%= request.getContextPath() %>/server/<%= player.getLastServer().getHostname() %>"><%= player.getLastServer().getHostname() %></a></td>
   </tr>
   <tr>
     <th><fmt:message key="word.channel"/></th>

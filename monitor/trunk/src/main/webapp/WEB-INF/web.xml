@@ -61,6 +61,16 @@
     <url-pattern>/server/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>player</servlet-name>
+    <jsp-file>/player.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>player</servlet-name>
+    <url-pattern>/player/*</url-pattern>
+  </servlet-mapping>
+
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
