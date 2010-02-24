@@ -1,7 +1,5 @@
 <%@ page import="java.io.IOException" %>
-<%@ page import="java.net.InetAddress" %>
-<%@ page import="java.net.InetSocketAddress" %>
-<%@ page import="java.net.Socket" %>
+<%@ page import="java.net.*" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="net.jetrix.monitor.ServerInfo" %>
 <%@ page import="net.jetrix.monitor.dao.IpToCountryDao" %>
@@ -26,6 +24,11 @@
                 || address.isMulticastAddress()) {
             // multicast and non routable addresses are ignored
             log.info("Server " + address + " not added: address not reachable");
+            return;
+        }
+        
+        if (address instanceof Inet6Address && address.getHostAddress().equals(address.getCanonicalHostName())) {
+            log.info("Server " + address.getHostAddress() + " not added: IPv6 address has no reverse name");
             return;
         }
         
