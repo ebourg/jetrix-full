@@ -50,6 +50,17 @@ public class ServerInfoDao extends HibernateDaoSupport
         return getSession().createQuery("FROM ServerInfo ORDER BY stats.playerCount DESC, hostname").list();
     }
 
+    /**
+     * Returns the latest servers added.
+     */
+    public List<ServerInfo> getLatestServers(int n)
+    {
+        Query query = getSession().createQuery("FROM ServerInfo WHERE lastOnline != null ORDER BY dateAdded DESC");
+        query.setMaxResults(n);
+        
+        return query.list();
+    }
+
     public void save(ServerInfo server)
     {
         getSession().saveOrUpdate(server);

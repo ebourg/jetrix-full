@@ -35,6 +35,7 @@
   <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
   <link rel="Shorcut Icon" href="favicon.ico">
   <link rel="alternate" type="text/xml" title="Servers XML summary" href="servers.xml">
+  <link rel="alternate" type="application/atom+xml" title="Latest TetriNET Servers" href="feed-servers.jsp" />
   <script type="text/javascript" src="scripts/sortable.js"></script>
 </head>
 <body>

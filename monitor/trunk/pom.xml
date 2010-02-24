@@ -133,6 +133,12 @@
       <version>1.2</version>
     </dependency>
 
+    <dependency>
+      <groupId>rome</groupId>
+      <artifactId>rome</artifactId>
+      <version>0.9</version>
+    </dependency>
+
     <!-- Needed for testing -->
     <dependency>
       <groupId>junit</groupId>
