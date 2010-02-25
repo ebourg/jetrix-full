@@ -1,0 +1,45 @@
+body {
+    font-family: sans-serif;
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #d3d3d3;
+    padding: 0 1em 1em 1em;
+    -moz-border-radius: 10px;
+    font-size: 80%;
+}
+
+img {
+    border: 0;
+}
+
+.thin {
+    border-collapse: collapse;
+    border-width: 1px;
+    border-color: black;
+}
+
+.thin th {
+    background-color: #dddddd;
+}
+
+.thin th, .thin td {
+    padding: .3em;
+    border-color: black;
+}
+
+.thin th a {
+    text-decoration: none;
+    color: black;
+}
+
+.sortarrow {
+    display: none;
+}
+
+a.datasheet {
+    background-image: url("../images/xml.png");
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    text-decoration: none;
+}

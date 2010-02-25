@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+
+    <!-- properties -->
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <!--<property name="hibernate.connection.datasource">java:comp/env/jdbc/jetrix</property>-->
+
+    <property name="hibernate.format_sql">true</property>
+    <property name="show_sql">false</property>
+    <property name="hibernate.use_sql_comments">false</property>
+    <property name="hibernate.current_session_context_class">thread</property>
+    <property name="hibernate.hbm2ddl.auto">create</property>
+
+    <!-- mapping files -->
+    <mapping resource="hibernate-mapping.xml"/>
+
+  </session-factory>
+</hibernate-configuration>
